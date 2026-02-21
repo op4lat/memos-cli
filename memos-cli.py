@@ -96,7 +96,7 @@ def list_last_memo(base_url, token):
         
         print(f"--- Latest Memo [ID: {memo_id}] ---")
         print(content)
-        print(f"----------------------------------")
+        print("----------------------------------")
         print(f"URL: {base_url}/memos/{memo_id}")
         copy_to_clipboard(f"{base_url}/memos/{memo_id}")
     except requests.exceptions.RequestException as e:
@@ -238,17 +238,20 @@ Examples:
     args = parser.parse_args()
 
     if args.last:
-        if adv_feat: 
+        if adv_feat:
             list_last_memo(base_url, token)
-        else: 
+        else:
             sys.exit(12)
     elif args.search:
-        if adv_feat: search_memos(base_url, token, args.search)
-        else: 
+        if adv_feat:
+            search_memos(base_url, token, args.search)
+        else:
             sys.exit(12)
     elif args.clipboard:
-        if adv_feat: post_to_memos(args.d, args.u, from_clipboard=True)
-        else: sys.exit(12)
+        if adv_feat:
+            post_to_memos(args.d, args.u, from_clipboard=True)
+        else:
+            sys.exit(12)
     elif args.delete:
         delete_memo(base_url, token, args.delete)
     elif args.update:
