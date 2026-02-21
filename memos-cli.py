@@ -238,11 +238,14 @@ Examples:
     args = parser.parse_args()
 
     if args.last:
-        if adv_feat: list_last_memo(base_url, token)
-        else: sys.exit(12)
+        if adv_feat: 
+            list_last_memo(base_url, token)
+        else: 
+            sys.exit(12)
     elif args.search:
         if adv_feat: search_memos(base_url, token, args.search)
-        else: sys.exit(12)
+        else: 
+            sys.exit(12)
     elif args.clipboard:
         if adv_feat: post_to_memos(args.d, args.u, from_clipboard=True)
         else: sys.exit(12)
