@@ -123,7 +123,7 @@ def search_memos(base_url, token, query):
             mid = m.get("name", "").split('/')[-1]
             preview = m.get("content", "").replace("```text\n", "").replace("\n```", "").split('\n')[0][:60]
             print(f"[{mid}] {preview}...")
-        print(f"-------------------------------------------")
+        print("-------------------------------------------")
     except requests.exceptions.RequestException as e:
         print(f"Error: Search failed: {e}")
         sys.exit(13)
@@ -197,8 +197,10 @@ def post_to_memos(show_delete, show_update, from_clipboard=False):
         copy_to_clipboard(full_memo_url)
 
         script_name = os.path.basename(__file__)
-        if show_delete: print(f"To delete this memo run: {script_name} -D {memo_id}")
-        if show_update: print(f"To update this memo run: [command] | {script_name} -U {memo_id}")
+        if show_delete: 
+            print(f"To delete this memo run: {script_name} -D {memo_id}")
+        if show_update: 
+            print(f"To update this memo run: [command] | {script_name} -U {memo_id}")
 
     except requests.exceptions.RequestException as e:
         print(f"Error: API Request failed: {e}")
@@ -264,3 +266,4 @@ Examples:
 # 11: No Piped Input (Standard Input is a TTY)
 # 12: Missing Configuration (MEMOS_URL or MEMOS_TOKEN)
 # 13: API or Network Error (Timeout, 401 Unauthorized, etc.)
+
