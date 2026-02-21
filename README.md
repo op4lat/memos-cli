@@ -4,7 +4,7 @@ A minimalist, pipe-friendly terminal utility for interacting with your [Memos](h
 
 ## Features
 
-* **Pipe Support:** Post any command output directly to Memos (e.g., `cat logs.txt | memo`).
+* **Pipe Support:** Post any command output directly to Memos (e.g., `cat logs.txt | memos-cli.py`).
 * **Clipboard Integration:** Automatically copies the URL of newly created memos for easy sharing.
 * **Security-Minded Advanced Features:** The script is fully capable of posting from your clipboard, searching your history, and listing recent memos; however, these are disabled by default for security and can be enabled via configuration.
 
@@ -45,7 +45,7 @@ MEMOS_ADVANCED_FEATURES="false" # Set to true to unlock search, list, and clipbo
 To run the tool simply by typing `memo`, add this to your `~/.bashrc` or `~/.zshrc`:
 
 ```bash
-alias memo='/path/to/your/script/memo.py'
+alias memo='/path/to/your/script/memos-cli.py'
 
 ```
 
@@ -67,18 +67,18 @@ To unlock these, you must explicitly set `MEMOS_ADVANCED_FEATURES="true"` in you
 
 | Command | Action |
 | --- | --- |
-| `echo "Capture this" | memo` | Post piped text to a new memo |
-| `memo -c` | Post content from clipboard (Advanced) |
-| `memo -L` | Display the most recent memo (Advanced) |
-| `memo -s "keyword"` | Search for memos (Advanced) |
-| `memo -D 123` | Delete memo with ID 123 |
-| `echo "New text" | memo -U 123` | Update memo 123 with new content |
+| ` echo "Capture this" \| memos-cli.py ` | Post piped text to a new memo |
+| `memos-cli.py -c` | Post content from clipboard (Advanced) |
+| `memos-cli.py -L` | Display the most recent memo (Advanced) |
+| `memos-cli.py -s "keyword"` | Search for memos (Advanced) |
+| `memos-cli.py -D 123` | Delete memo with ID 123 |
+| `echo "New text" \| memo -U 123` | Update memo 123 with new content |
 
 ---
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/op4lat/memos-cli/blob/main/LICENSE) file for details.
 
 ## Credits
 
