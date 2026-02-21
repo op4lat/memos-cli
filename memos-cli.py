@@ -96,7 +96,7 @@ def list_last_memo(base_url, token):
         
         print(f"--- Latest Memo [ID: {memo_id}] ---")
         print(content)
-        print(f"----------------------------------")
+        print("----------------------------------")
         print(f"URL: {base_url}/memos/{memo_id}")
         copy_to_clipboard(f"{base_url}/memos/{memo_id}")
     except requests.exceptions.RequestException as e:
@@ -123,7 +123,7 @@ def search_memos(base_url, token, query):
             mid = m.get("name", "").split('/')[-1]
             preview = m.get("content", "").replace("```text\n", "").replace("\n```", "").split('\n')[0][:60]
             print(f"[{mid}] {preview}...")
-        print(f"-------------------------------------------")
+        print("-------------------------------------------")
     except requests.exceptions.RequestException as e:
         print(f"Error: Search failed: {e}")
         sys.exit(13)
@@ -197,8 +197,10 @@ def post_to_memos(show_delete, show_update, from_clipboard=False):
         copy_to_clipboard(full_memo_url)
 
         script_name = os.path.basename(__file__)
-        if show_delete: print(f"To delete this memo run: {script_name} -D {memo_id}")
-        if show_update: print(f"To update this memo run: [command] | {script_name} -U {memo_id}")
+        if show_delete: 
+            print(f"To delete this memo run: {script_name} -D {memo_id}")
+        if show_update: 
+            print(f"To update this memo run: [command] | {script_name} -U {memo_id}")
 
     except requests.exceptions.RequestException as e:
         print(f"Error: API Request failed: {e}")
@@ -236,14 +238,20 @@ Examples:
     args = parser.parse_args()
 
     if args.last:
-        if adv_feat: list_last_memo(base_url, token)
-        else: sys.exit(12)
+        if adv_feat:
+            list_last_memo(base_url, token)
+        else:
+            sys.exit(12)
     elif args.search:
-        if adv_feat: search_memos(base_url, token, args.search)
-        else: sys.exit(12)
+        if adv_feat:
+            search_memos(base_url, token, args.search)
+        else:
+            sys.exit(12)
     elif args.clipboard:
-        if adv_feat: post_to_memos(args.d, args.u, from_clipboard=True)
-        else: sys.exit(12)
+        if adv_feat:
+            post_to_memos(args.d, args.u, from_clipboard=True)
+        else:
+            sys.exit(12)
     elif args.delete:
         delete_memo(base_url, token, args.delete)
     elif args.update:
@@ -264,3 +272,4 @@ Examples:
 # 11: No Piped Input (Standard Input is a TTY)
 # 12: Missing Configuration (MEMOS_URL or MEMOS_TOKEN)
 # 13: API or Network Error (Timeout, 401 Unauthorized, etc.)
+
