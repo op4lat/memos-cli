@@ -23,6 +23,7 @@ CORE ACTIONS:
 - READ:   Retrieve the most recent memo (-L) or search by keyword (-s).
 - UPDATE: Edit existing memos by ID (-U) using new piped input.
 - DELETE: Remove memos by ID (-D).
+- BURN:   Post a memo and interactively delete it after a keypress (-b).
 """
 
 import sys
@@ -129,13 +130,15 @@ def search_memos(base_url, token, query):
         sys.exit(13)
 
 # 6. Delete Action: Permanently removes a memo by its numeric ID
-def delete_memo(base_url, token, memo_id):
+def delete_memo(base_url, token, memo_id, silent=False):
+    memo_id = str(memo_id).split('/')[-1]
     endpoint = f"{base_url}/api/v1/memos/{memo_id}"
     headers = {"Authorization": f"Bearer {token}"}
     try:
         response = requests.delete(endpoint, headers=headers, timeout=10)
         response.raise_for_status()
-        print(f"Success: Memo {memo_id} deleted.")
+        if not silent:
+            print(f"Success: Memo {memo_id} deleted.")
     except requests.exceptions.RequestException as e:
         print(f"Error: Delete failed: {e}")
         sys.exit(13)
@@ -150,6 +153,7 @@ def update_memo(base_url, token, memo_id, visibility):
     if not input_data:
         sys.exit(0)
 
+    memo_id = str(memo_id).split('/')[-1]
     endpoint = f"{base_url}/api/v1/memos/{memo_id}"
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     payload = {"content": f"```text\n{input_data}\n```", "visibility": visibility}
@@ -164,7 +168,7 @@ def update_memo(base_url, token, memo_id, visibility):
         sys.exit(13)
 
 # 8. Post Action: Creates a new memo from piped data or clipboard (-c)
-def post_to_memos(show_delete, show_update, from_clipboard=False):
+def post_to_memos(show_delete, show_update, from_clipboard=False, burn=False):
     base_url, api_token, visibility, _ = get_config()
 
     if from_clipboard:
@@ -202,6 +206,19 @@ def post_to_memos(show_delete, show_update, from_clipboard=False):
         if show_update: 
             print(f"To update this memo run: [command] | {script_name} -U {memo_id}")
 
+        if burn and memo_id:
+            # Note: I've intentionally left the 🔥 emoji because it actually looks 
+            # good even though it looks like vibe code.
+            print("\n🔥 BURN MODE: Memo will be deleted when you proceed.")
+            try:
+                # Open terminal directly to bypass piped stdin for the prompt
+                with open('/dev/tty', 'r') as tty:
+                    print("Press [Enter] to delete this memo from the server...", end="", flush=True)
+                    tty.readline()
+            except Exception:
+                input("Press [Enter] to delete this memo from the server...")
+            delete_memo(base_url, api_token, memo_id, silent=False)
+
     except requests.exceptions.RequestException as e:
         print(f"Error: API Request failed: {e}")
         sys.exit(13)
@@ -221,6 +238,7 @@ if __name__ == "__main__":
 Examples:
   Post a memo:           echo "Hello World" | memo
   Post from clipboard:   memo -c                (Advanced)
+  Burn after reading:    echo "Secret" | memo -b
   Update memo #123:      echo "Update" | memo -U 123
   Delete memo #123:      memo -D 123
 {"  List last memo:        memo -L" if adv_feat else ""}
@@ -228,6 +246,7 @@ Examples:
     )
     
     parser.add_argument("-d", action="store_true", help="Show command to self-delete")
+    parser.add_argument("-b", "--burn", action="store_true", help="Interactively delete memo after posting")
     parser.add_argument("-u", action="store_true", help="Show command to self-update")
     parser.add_argument("-D", "--delete", metavar="ID", help="Delete a specific memo by ID")
     parser.add_argument("-U", "--update", metavar="ID", help="Update a specific memo by ID")
@@ -247,17 +266,13 @@ Examples:
             search_memos(base_url, token, args.search)
         else:
             sys.exit(12)
-    elif args.clipboard:
-        if adv_feat:
-            post_to_memos(args.d, args.u, from_clipboard=True)
-        else:
-            sys.exit(12)
     elif args.delete:
         delete_memo(base_url, token, args.delete)
     elif args.update:
         update_memo(base_url, token, args.update, visibility)
     else:
-        post_to_memos(args.d, args.u)
+        # Pass burn flag to post_to_memos
+        post_to_memos(args.d, args.u, from_clipboard=args.clipboard, burn=args.burn)
 
 # --- CREDITS & DOCUMENTATION ---
 # Memos Project: https://github.com/usememos/memos
